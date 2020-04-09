@@ -16,7 +16,7 @@ x <- read_rds("college.rds")
 
 Today's class will be based on [Chapter 12: "Multiple Regression"](https://davidkane9.github.io/PPBDS/12-multiple-regression.html). Have you read it? We will be using data on college characteristics from the IPEDS Database and the Scorecard created by the Department of Education, gathered via the [Opportunity Insights](https://opportunityinsights.org/) project.  The codebook with explanations for each variable is [here](https://opportunityinsights.org/wp-content/uploads/2018/04/Codebook-MRC-Table-10.pdf). We will be trying to figure out what characteristics of a college are associated with the 2011 median income of students, `earnings`, 10 years after they graduate. The other data --- `faculty`, the average faculty salary; `sat`, the average SAT score; `tier`, the type of college; `public`, the private/public status; and `price`, tuition --- is reported as of 2001.
 
-**All dollar values are now measured in thousdands.**
+**All dollar values are now measured in thousands.**
 
 
 ### Scene 7
@@ -31,6 +31,19 @@ Third, consider a school with average faculty salary of $50,000 and average SAT 
 
 Fourth (and optional! not covered in the book!), check out the `predict()` function. This allows you to avoid typing out the formula yourself.
 
+```{r answer_key, include = FALSE}
+
+model_1 <- lm(earnings ~ sat + faculty, data = x) 
+ 
+model_1 %>% 
+ tidy()
+
+- 2.59 +   (.024 * 1200) + (0.39 * 50)   
+
+
+predict(model_1, newdata = tibble(faculty = 50, sat = 1200))
+
+```
 
 
 ### Scene 8
@@ -44,6 +57,12 @@ Second, define what the residual is.
 Third, determine the school with the largest positive residual and the school with the largest negative residual.
 
 Fourth, speculate about what causes these residuals. What is the model missing? How might we improve the model?
+
+```{r}
+augment(model_1, data = x) %>% 
+  select(name, earnings, sat, faculty, .fitted, .resid) %>% 
+  arrange(desc(.resid))
+```
 
 
 ### Scene 9
